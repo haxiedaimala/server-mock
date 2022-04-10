@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <ul>
+        <li>城市：<span class="city"></span></li>
+        <li>天气：<span class="weather"></span></li>
+    </ul>
+    <script>
+        const request = ({
+            url,
+            params,
+            onsuccess,
+            onerror
+        }) => {
+            url = url + '?' + Object.entries(params).map(arr => arr[0] + '=' + arr[1]).join('&')
+
+            let xhr = new XMLHttpRequest()
+            xhr.open('GET', url, true)
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300 || xhr.status === 304) {
+                    console.log(url)
+                    onsuccess(JSON.parse(xhr.responseText))
+
+                } else {
+                    onerror()
+                }
+            }
+            xhr.onerror = onerror
+            xhr.send()
+
+        }
+
+        request({
+            url: 'http://localhost:3000/getWeather',
+            params: {
+                city: '杭州'
+            },
+            onsuccess(success) {
+                document.querySelector('.city').innerText = success.city
+                document.querySelector('.weather').innerText = success.weather
+                console.log(success)
+            },
+            onerror() {
+                console.log('服务器异常')
+            }
+        })
+    </script>
+
+</body>
+
+</html>
